@@ -41,3 +41,30 @@ method1 是幂等方法，可以重复调用。
  - 失败
  - 并发
  - 不返回
+
+
+
+
+
+ ## module A
+
+减库存，原子操作，只有成功和失败两种结果。确认，取消，前提，减库存成功。否则返回 notfound
+
+1. 减库存  
+    - args: （产品Id，数量） 的列表 ， activeId：往来管理+退货单+退货单号
+    - result: success , fail
+
+2. 确认，取消
+    - args： activeId
+    - result： success，fail，notfund
+
+
+## module
+
+审核订单
+
+1. 预审核，订单不允许删除
+  - args： activeId：
+  - result：success，fail
+
+2 确认，取消

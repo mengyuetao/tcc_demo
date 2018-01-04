@@ -58,3 +58,24 @@ lazy val thriftExampleServer = (project in file("examples/thrift-server/thrift-e
 
 
   )
+
+
+
+lazy val inventory = (project in file("inventory"))
+  .settings(
+    name := "inventory",
+    moduleName := "inventory",
+    libraryDependencies ++= Seq(
+      "com.twitter" %% "finatra-http" % "17.12.0",
+      "com.twitter" %% "finatra-http" % "17.12.0"% Test classifier "tests",
+      "com.twitter" %% "inject-core" % "17.12.0"% Test classifier "tests",
+      "com.twitter" %% "inject-server" % "17.12.0"% Test  classifier "tests",
+      "com.twitter" %% "inject-app" % "17.12.0"% Test  classifier "tests",
+      "com.twitter" %% "inject-modules" % "17.12.0"% Test  classifier "tests",
+      "org.scalatest" %% "scalatest" %  "3.0.0" % "test",
+      "com.google.inject" % "guice" % "4.0" classifier "tests",
+      "com.google.inject.extensions" % "guice-testlib" %"4.0" % "test",
+      "org.mockito" % "mockito-core" %   "1.9.5" % "test"))
+
+
+
