@@ -16,11 +16,11 @@
 
  相关资料：
 
-  [大规模SOA系统中的分布事务处理](大规模SOA系统中的分布事务处理.pdf)
+  [大规模SOA系统中的分布事务处理](docs/大规模SOA系统中的分布事务处理.pdf)
 
-  [支付宝架构与技术](支付宝架构与技术.pdf)
+  [支付宝架构与技术](docs/支付宝架构与技术.pdf)
 
-  [Atomic Distributed Transactions: a RESTful Design](wsrest2014_submission_7.pdf)
+  [Atomic Distributed Transactions: a RESTful Design](docs/wsrest2014_submission_7.pdf)
 
 
  系统架构如下（引用大规模SOA系统中的分布事务处理 p22,p29）：
