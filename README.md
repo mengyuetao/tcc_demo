@@ -35,8 +35,26 @@
 
 
 
+## 实现原理
+
+![流程图](docs/tcc-flow1.png)
+
+主业务状态转换如下：
+
+- 当所有的从业务都成功时，同时主业务也成功，执行确认（comfirm）操作
+- 按照策略，当无法comfirm或cancel到一定次数或时常时，挂起（hang）事务等待人工干预
+
+![主业务状态图](docs/tcc-flow2.png)
 
 
+从业务状态转换如下：
+- 从业务和主业务状态基本一致，不再详细描述
+- 有一种情况，从业务超时不返回，或则返回结果没有成功记录，此时主业务procssingFail（红色部分）
+那么，从业务当前状态实际未知，将在procesing直接调用cancel，这也是为什么只有在主业务processing
+时才能写入procesingSuc，或proccssingFail，因为此时主业务确认还是取消已经计算完毕，所以迟到的结果不允许写入，否则会影响一致性。
+
+
+![从业务状态图](docs/tcc-flow3.png)
 
 ## 代码结构
 
@@ -57,7 +75,7 @@ mysql 数据库：
 - 从业务服务（订单）：order，order_tr
 - 从业务服务（库存）：warehouse，warehouse_tr
 
-[数据库脚本](mysql.sql)
+[数据库脚本](docs/mysql.sql)
 
 ## 编译
 
@@ -71,6 +89,10 @@ test
 
 
 ## 运行与验证
+
+安装数据库并创建数据库表 [数据库脚本](docs/mysql.sql)
+修改数据库连接中配置 src/main/resources/application.conf
+
 
 ```
 cd .
