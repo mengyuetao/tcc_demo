@@ -23,7 +23,9 @@
  相关资料：
 
   [大规模SOA系统中的分布事务处理](大规模SOA系统中的分布事务处理.pdf)
+
   [支付宝架构与技术](支付宝架构与技术.pdf)
+  
   [Atomic Distributed Transactions: a RESTful Design](wsrest2014_submission_7.pdf)
 
 
