@@ -1,4 +1,4 @@
-## tcc-design
+## tcc-design 柔性事务参考实现
 
 
 - Author: Yuetao Meng
@@ -10,17 +10,23 @@
 
 
 
- ## 概述
+ ## 特性
 
- 本项目实现了一个可用的分布式事务系统 （柔性事务），提供简单的 demo 供参考！
+ - 演示了一个可用的分布式事务系统 （柔性事务），同时提供简单的 demo 供参考！
+ - 演示了如何使用 [finatra](https://twitter.github.io/finatra/)高性能异步RPC，实现了一个轻量级的微服务系统
+ - 演示了如何使用 [slick](http://slick.lightbend.com)Functional Relational Mapping (FRM)函数式映射实现轻量级高性能异步统一的数据库访问
+ - 业务活动管理器
+ - 业务活动恢复器
+ - 客户端拦截器
+ - 服务端拦截器
+ - 支持java api
 
- 相关资料：
 
-  [大规模SOA系统中的分布事务处理](docs/大规模SOA系统中的分布事务处理.pdf)
+## 柔性事务相关资料：
 
-  [支付宝架构与技术](docs/支付宝架构与技术.pdf)
-
-  [Atomic Distributed Transactions: a RESTful Design](docs/wsrest2014_submission_7.pdf)
+  - [大规模SOA系统中的分布事务处理](docs/大规模SOA系统中的分布事务处理.pdf)
+  - [支付宝架构与技术](docs/支付宝架构与技术.pdf)
+  - [Atomic Distributed Transactions: a RESTful Design](docs/wsrest2014_submission_7.pdf)
 
 
  系统架构如下（引用大规模SOA系统中的分布事务处理 p22,p29）：
