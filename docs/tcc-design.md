@@ -5,66 +5,112 @@
 - Mail: mfty1980@sina.com
 - Date: 2018-1-2
 
-
-## 关于幂等方法的定义
-
-1. 同一方法，调用多次，返回相同结果，不产生副作用。（规格时间内，如60分）
-2. 重复调用方法，应该由框架执行，且不能超过指定时间，如60分,可能还应该包括第一次调用的时间， 上下文。
-3. 方法必须在接受时间内结束，修复，如15天内，必须成功或失败。
-4. 提供查询方法?
-
-
-
- ![详细图](tcc-flow.png)
-
-
-* 1 调用方法 method1
-* 2 启动coordiniaotr with Id
-    * Id 存在，并且有结果，直接返回结果。
-    * Id 存在，并且没有结果，等待结果，并发执行中。
-* 3 调用方法method1-1
-    * 任何异常，直接到步骤9，执行决策
-* 4 调用pre-method
-    * Id 存在，不可能到这一步，返回异常
-    * Id 不存在，添加Id
-
-* 5 回写结果，可选（不考虑异常）
-* 9 决策成功还是 cancel ，返回决策结果。
-* 10 执行 retry，返回结果。
-
-
-## method1 返回结果
-
-method1 是幂等方法，可以重复调用。
-
- - 成功
- - 失败
- - 并发
- - 不返回
+- update: 2018-5-23  YuetaoMeng  **add demo example**
 
 
 
 
+ ## 概述
 
- ## module A
+ 本项目实现了一个可用的分布式事务系统 （柔性事务），提供简单的 demo 供参考！
+ 系统架构如下：
 
-减库存，原子操作，只有成功和失败两种结果。确认，取消，前提，减库存成功。否则返回 notfound
-
-1. 减库存  
-    - args: （产品Id，数量） 的列表 ， activeId：往来管理+退货单+退货单号
-    - result: success , fail
-
-2. 确认，取消
-    - args： activeId
-    - result： success，fail，notfund
+![支付宝架构与技术](1.png)
+![支付宝架构与技术](2.png)
 
 
-## module
 
-审核订单
+ 相关资料：
 
-1. 预审核，订单不允许删除
-  - args： activeId：
-  - result：success，fail
+  [大规模SOA系统中的分布事务处理](大规模SOA系统中的分布事务处理.pdf)
+  [支付宝架构与技术](支付宝架构与技术.pdf)
+  [Atomic Distributed Transactions: a RESTful Design](wsrest2014_submission_7.pdf)
 
-2 确认，取消
+
+## 代码结构
+
+代码结构对应关系：
+
+- 业务活动管理器：src/scala/tcc/TccServer.scala
+- 业务恢复管理器：src/scala/tcc/TranServer.scala
+- 服务端拦截器：  src/scala/tcc/filters/TccSubMainServerFilter.scala
+- 客户端拦截器：  src/scala/tcc/filters/TccMainFilter.scala TccSubMainFilter.scala
+
+Demo ：
+- 主业务服务：  demo/ordermain
+- 从业务服务（订单）：  demo/order
+- 从业务服务 （库存）： demo/warehouse
+
+mysql 数据库：
+- 业务活动管理器,业务活恢复管理器 : tcc_lv1 ,tcc_lv2
+- 从业务服务（订单）：order，order_tr
+- 从业务服务（库存）：warehouse，warehouse_tr
+
+[数据库脚本](mysql.sql)
+
+## 编译
+
+```
+cd .
+sbt
+compile
+test
+
+```
+
+
+## 运行与验证
+
+```
+cd .
+sbt
+project coServer
+
+runMain com.jtb.tcc.TranServerMain
+runMain com.jtb.demo.order.OrderServerMain
+runMain com.jtb.demo.warehouse.WareHouseServerMain
+runMain com.jtb.demo.ordermain.OrderMainServerMain
+
+
+runMain com.jtb.demo.ordermain.client.OrderClienttMain
+
+runMain com.jtb.demo.recovery.RecoveryServerMain
+runMain com.jtb.tcc.TccServerMain
+
+
+```
+
+
+
+名称        | 说明
+------     | ---------
+TranServerMain  |   启动 业务活动管理器
+OrderServerMain  |   启动 从业务服务（订单）
+WareHouseServerMain |   启动 从业务服务（库存）
+OrderMainServerMain |   启动 主业务服务（订单与库存）
+OrderClienttMain    |   启动 主业务服务客户端（调用主业务服务）
+RecoveryServerMain    |   启动 业务活恢复管理器适配器（从服务与恢复服务对接服务）
+TccServerMain       |     启动 业务活恢复管理器
+
+
+1 启动 OrderClienttMain 后，模拟生成入库单，订单号 order001，客户号 franchier001，
+产品编号 product001, 产品数量 1000 ，此时资源保留，但并不确认，所以
+
+ 1. warehouse 为空
+ 2. orde表有一条订单记录如下，状态为processSuc
+```
+ 'order001','franchiser001','product001','1000','processSuc','196342338245758976'
+```
+
+2 启动 TccServerMain， 资源被确认
+
+1. warehouse 有一条库存记录
+
+```
+'franchiser001','product001','1000','196342338245758976'
+```
+
+2. orde表有一条订单记录如下，状态为comfirm
+```
+'order001','franchiser001','product001','1000','comfirm','196342338245758976'
+```
